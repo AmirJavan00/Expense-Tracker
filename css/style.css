@@ -11,19 +11,26 @@
     --emerald-green: #32E0C4;
     --red: #EA2264;
     --green: #08CB00;
+    --pading:20px;
 }
 body{
     font-family: IRANSans;
-    background-color: var(--light-teal);
+    /* background-color: var(--light-teal); */
 }
 a{
     color: var(--dark-teal-green);
     text-decoration: none;
 }
-.contaner{
+.page{
     max-width: 1200px;
     margin: 0 auto;
     color: var(--dark-teal-green);
+}
+
+/* استایل های صفحه اصلی */
+#home_page{
+    display: none;
+    padding: 0 var(--pading);
 }
 #header{
     background: linear-gradient(var(--emerald-green),var(--teal-green));
@@ -31,8 +38,8 @@ a{
     display: flex;
     flex-direction: column;
     min-height: 120px;
-    position: relative;
     padding: 10px;
+    position: relative;
     margin-bottom: 5rem;
 }
 .welcome-msg{
@@ -80,16 +87,17 @@ a{
     font-weight: 700;
 }
 #last_transaction{
-    padding: 20px;
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
+#last_transaction h2{
+    font-size: 1.2em;
+}
 .add_transaction_btn{
     position: absolute;
-    left: 20px;
-    top: 20px;
+    left: 0;
     background-color: var(--dark-teal-green);
     border-radius: 20px;
     padding: 8px;
@@ -129,11 +137,7 @@ a{
     border-radius: 10px;
     align-items: center;
 }
-.category_logo i{
-    /* height: 0px; */
-}
-#bottom_nav{
-}
+
 .history_btn path{
     fill: var(--dark-teal-green) !important;
 }
@@ -162,4 +166,34 @@ a{
 }
 #bottom_nav nav a svg g{
     color: #08CB00 !important;
+}
+
+/* استایل های صفحه تاریخچه */
+#history_page{
+    padding: var(--pading);
+}
+#history_page h2{
+    text-align: center;
+}
+#date{
+    margin-bottom: 1rem;
+}
+#date h3{
+    margin-bottom: 0.5rem;
+}
+.date_item{
+    width: 15%;
+    background-color: var(--emerald-green);
+    text-align: center;
+    padding: 15px 10px;
+    gap: 5px;
+    border-radius: 20px;
+}
+.date_item .day{
+    font-weight: 600;
+    color: #fff;
+}
+.date_item .month{
+    font-size: 0.9em;
+    font-weight: 500;
 }

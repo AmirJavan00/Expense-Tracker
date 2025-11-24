@@ -10,7 +10,7 @@
     --light-teal: #E8FFFF;
     --emerald-green: #32E0C4;
     --red: #EA2264;
-    --green: #08CB00;
+    --green: #38d832;
     --pading:20px;
 }
 body{
@@ -25,7 +25,7 @@ a{
     max-width: 1200px;
     margin: 0 auto;
     color: var(--dark-teal-green);
-}
+} 
 
 /* استایل های صفحه اصلی */
 #home_page{
@@ -171,6 +171,7 @@ a{
 /* استایل های صفحه تاریخچه */
 #history_page{
     padding: var(--pading);
+    display: none;
 }
 #history_page h2{
     text-align: center;
@@ -195,5 +196,49 @@ a{
 }
 .date_item .month{
     font-size: 0.9em;
+    font-weight: 500;
+}
+
+/* استایل های صفحه آمار */
+#statistic_page{
+    padding: var(--pading);
+}
+#monthly_stats h2{
+    margin-bottom:var(--pading);
+}
+.monthly_stats{
+    display: flex;
+    justify-content: space-evenly;
+    gap: 1rem;
+}
+.monthly_stats > div{
+    text-align: center;
+    width: 50%;
+    background:linear-gradient(47deg,var(--teal-green)50%,var(--light-teal-green));
+    color: #fff;
+    padding: var(--pading);
+    border-radius: 15px;
+    font-size: 1.2em;
+}
+.monthly_stats span{
+    font-weight: 900;
+    font-size: 1.5em;
+}
+#category_stats{
+    margin-top: var(--pading);
+}
+#category_stats h3{
+    margin-bottom: 10px;
+}
+.category_stat{
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2em;
+    border-top: 1.2px solid var(--dark-teal-green);
+    border-radius: 3px;
+}
+.category_stat .stat_label::after{
+    content: ":";
+    margin-right: 1px;
     font-weight: 500;
 }

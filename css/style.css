@@ -16,6 +16,9 @@
 body{
     font-family: IRANSans;
     /* background-color: var(--light-teal); */
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 95px;
 }
 a{
     color: var(--dark-teal-green);
@@ -29,7 +32,6 @@ a{
 
 /* استایل های صفحه اصلی */
 #home_page{
-    display: none;
     padding: 0 var(--pading);
 }
 #header{
@@ -138,8 +140,12 @@ a{
     align-items: center;
 }
 
-.history_btn path{
-    fill: var(--dark-teal-green) !important;
+/* استایل های نویگیشن پایین */
+#bottom_nav{
+    position: absolute;
+    width: 100%;
+    bottom: 10px;
+    z-index: 999;
 }
 #bottom_nav nav{
     display: flex;
@@ -148,14 +154,17 @@ a{
     margin: 0 auto;
     border-radius: 15px;
     padding: 10px;
-    padding-top: 2rem;
     justify-content: space-evenly;
+    background-color: #a6f6f191;
 }
 #bottom_nav nav a{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border-radius:12px;
+    padding: 4px;
+    position: relative;
 }
 #bottom_nav nav a p{
     font-weight: 500;
@@ -167,11 +176,13 @@ a{
 #bottom_nav nav a svg g{
     color: #08CB00 !important;
 }
+#history_btn path{
+    fill: var(--dark-teal-green) ;
+}
 
 /* استایل های صفحه تاریخچه */
 #history_page{
     padding: var(--pading);
-    display: none;
 }
 #history_page h2{
     text-align: center;
@@ -202,7 +213,6 @@ a{
 /* استایل های صفحه آمار */
 #statistic_page{
     padding: var(--pading);
-    display: none;
 }
 #monthly_stats h2{
     margin-bottom:var(--pading);
@@ -376,9 +386,6 @@ a{
     display: flex;
     justify-content: space-between;
 }
-/* .page{
-    display: block !important;
-} */
 .category_content{
     display: flex;
     gap: 10px;
@@ -387,4 +394,25 @@ a{
 .delete_category{
     width: 40px;
     cursor: pointer;
+}
+
+.display-none{
+    display: none !important;
+}
+.display-block{
+    display: block !important;
+}
+.icon_fill{
+    fill: #aedcd8 !important;
+}
+.box-shadow{
+    box-shadow: #213E3B 0 0 5px 1px;
+}
+.after-line::after{
+    content: "";
+    width: 90%;
+    height: 5px;
+    background-color: var(--dark-teal-green);
+    border-radius: 10px;
+
 }

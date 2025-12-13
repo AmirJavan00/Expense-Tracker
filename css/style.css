@@ -19,10 +19,14 @@ body{
     min-height: 100vh;
     position: relative;
     padding-bottom: 95px;
+    position: relative;
 }
 a{
     color: var(--dark-teal-green);
     text-decoration: none;
+}
+input:focus{
+    outline: none;
 }
 .page{
     max-width: 1200px;
@@ -97,7 +101,7 @@ a{
 #last_transaction h2{
     font-size: 1.2em;
 }
-.add_transaction_btn{
+.add_transaction_btn , .btn_add_category{
     position: absolute;
     left: 0;
     background-color: var(--dark-teal-green);
@@ -110,7 +114,7 @@ a{
     color: #fff;
     cursor: pointer;
 }
-.add_transaction_btn p{
+.add_transaction_btn p, .btn_add_category p{
     font-size: 0.8em;
 }
 .transaction{
@@ -395,7 +399,117 @@ a{
     width: 40px;
     cursor: pointer;
 }
+.btn_add_category{
+    left: 20px;
+}
+/* استایل های قسمت افزودن تراکنش*/
+#add_transaction_section{
+    position: absolute;
+    box-shadow: #213e3b73 0 0 8px 0;
+    right: 50%;
+    top: 48px;
+    transform: translateX(50%);
+    width: 80%;
+    padding: 10px;
+    border-radius: 15px;
+    z-index: 1000;
+    background-color: #213e3b40;
+    backdrop-filter: blur(15px);
+    color: #fff;
+    transition: all 350ms linear;
+}
+#add_transaction_section h2{
+    color: var(--dark-teal-green); 
+    font-weight: 800;
+}
+#add_transaction_section form{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+#add_transaction_section input[type="submit"]{
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.2em;
+    width: 200px;
+    margin: 0 auto;
+    padding: 4px;
+    border-radius: 8px;
+    background-color: var(--dark-teal-green);
+    cursor: pointer;
+}
+#add_transaction_section input[type="radio"]{
+    display: none;
+}
+#add_transaction_section form div > label{
+    font-weight: 500;
+    font-size: 1.2em;
+}
+.form_input{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+#inp_transaction_title{
+    border-radius: 10px;
+    border: none;
+    padding: 7px 5px;
+    background:var(--light-teal);
+    box-shadow: #213E3B 0 0 5px 0;
+}
+#inp_among{
+    width: 150px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: var(--light-teal);
+}
+#inp_transaction_title:focus{
+    box-shadow: #213E3B 0 0 5px 0 inset;
 
+}
+.category_option label{
+    border: var(--teal-green) 1px solid;
+    border-radius: 5px;
+    color: var(--dark-teal-green);
+    background-color: var(--light-teal);
+    padding: 5px;
+    font-weight: 400 !important;
+    cursor: pointer;
+}
+.category_option input:checked + label{
+    background-color: var(--dark-teal-green);
+    color: white;
+    border-color: var(--teal-green);
+}
+.type_options label{
+    background-color: var(--light-teal);
+    color: var(--dark-teal-green);
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 2px 8px;
+    transition: all 250ms linear;
+}
+#income_type:checked + label{
+    background-color: var(--green);
+    color: #fff;
+}
+#expence_type:checked + label{
+    background-color: var(--red);
+    color: #fff;
+
+}
+#btn_close_add_transaction{
+    position: absolute;
+    top: 16px;
+    left: 12px;
+    width: 22px;
+    cursor: pointer;
+}
+#btn_close_add_transaction svg{
+    width: 100% !important;
+    height: 100%;
+}
+/* //////////////// */
 .display-none{
     display: none !important;
 }

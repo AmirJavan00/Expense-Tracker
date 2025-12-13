@@ -1,9 +1,31 @@
+// ----class----
+
+// ----variables----
+
+// مقدار های قسمت نویگیشن پایین
 let pages = document.querySelectorAll(".page")
 let nav_items = document.querySelectorAll("#bottom_nav a")
 let home_page = document.querySelector("#home_page")
 let path_icons = document.querySelectorAll("#bottom_nav path")
 
+// مقدار های بخش اضاه کردن تراکنش
+let add_transaction_btn = document.querySelectorAll(".add_transaction_btn")
+let add_transaction_section = document.querySelector("#add_transaction_section")
+let btn_close_add_transaction = document.querySelector("#btn_close_add_transaction")
+// ----eventlisteners----
 
+// بخش اضافه کردن تراکنش 
+btn_close_add_transaction.addEventListener("click",()=>{
+    add_transaction_section.classList.add("display-none")
+})
+
+add_transaction_btn.forEach(btn => {
+    btn.addEventListener("click",()=>{
+    add_transaction_section.classList.remove("display-none")
+    })    
+});
+
+// بخش نویگیشن پایین
 function displayNoneAll(){
     pages.forEach(page => {
         page.classList.add("display-none")
@@ -28,7 +50,6 @@ home_page.classList.add("display-block")
 
 let home_icon_path = document.getElementById("home_icon_path")
 home_icon_path.classList.remove("icon_fill")
-
 
 nav_items.forEach(nav_item => {
     nav_item.addEventListener("click",()=>{

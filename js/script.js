@@ -12,7 +12,21 @@ let path_icons = document.querySelectorAll("#bottom_nav path")
 let add_transaction_btn = document.querySelectorAll(".add_transaction_btn")
 let add_transaction_section = document.querySelector("#add_transaction_section")
 let btn_close_add_transaction = document.querySelector("#btn_close_add_transaction")
+
+// مقدارهای بخش اضافه کردن دسته یندی
+let btn_add_category = document.querySelector(".btn_add_category")
+let btn_close_add_category = document.querySelector("#btn_close_add_category")
+let add_category_section = document.querySelector("#add_category_section")
+
 // ----eventlisteners----
+
+// بخش اضافه کردن دسته بندی
+btn_add_category.addEventListener("click",()=>{
+    add_category_section.classList.remove("display-none")
+})
+btn_close_add_category.addEventListener("click",()=>{
+    add_category_section.classList.add("display-none")
+})
 
 // بخش اضافه کردن تراکنش 
 btn_close_add_transaction.addEventListener("click",()=>{

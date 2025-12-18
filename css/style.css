@@ -403,7 +403,7 @@ input:focus{
     left: 20px;
 }
 /* استایل های قسمت افزودن تراکنش*/
-#add_transaction_section{
+#add_transaction_section, #add_category_section{
     position: absolute;
     box-shadow: #213e3b73 0 0 8px 0;
     right: 50%;
@@ -418,16 +418,16 @@ input:focus{
     color: #fff;
     transition: all 350ms linear;
 }
-#add_transaction_section h2{
+#add_transaction_section h2, #add_category_section h2{
     color: var(--dark-teal-green); 
     font-weight: 800;
 }
-#add_transaction_section form{
+#add_transaction_section form, #add_category_section form{
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
-#add_transaction_section input[type="submit"]{
+#add_transaction_section input[type="submit"], #add_category_section input[type="submit"]{
     color: #fff;
     font-weight: 700;
     font-size: 1.2em;
@@ -450,7 +450,7 @@ input:focus{
     flex-direction: column;
     gap: 5px;
 }
-#inp_transaction_title{
+#inp_transaction_title, #inp_category_name{
     border-radius: 10px;
     border: none;
     padding: 7px 5px;
@@ -498,18 +498,54 @@ input:focus{
     color: #fff;
 
 }
-#btn_close_add_transaction{
+#btn_close_add_transaction , #btn_close_add_category{
     position: absolute;
     top: 16px;
     left: 12px;
     width: 22px;
     cursor: pointer;
 }
-#btn_close_add_transaction svg{
+#btn_close_add_transaction svg, #btn_close_add_category svg{
     width: 100% !important;
     height: 100%;
 }
-/* //////////////// */
+
+/* استایل های قسمت افزودن دسته بندی */
+#add_category_section{
+    top: 50%;
+    transform:translateX(50%) translateY(-50%) !important;
+}
+#add_category_section input[type="radio"]{
+    display: none;
+}
+.icons_option{
+    display: flex;
+    gap: 5px;
+    max-width: 100%;
+}
+.icons_option label{
+    width: 50px !important;
+    min-width: 50px;
+    height: 40px;
+    background-color: var(--light-teal);
+    color: var(--dark-teal-green);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.icons_option input:checked + label{
+    background-color: var(--dark-teal-green);
+    color: var(--light-teal);
+    border: var(--teal-green) 2px solid;
+}
+@media only screen and (max-width: 850px) {
+    .icons_option{
+        overflow-x: scroll;
+    }
+}
+/* ///////////////////////////////// */
 .display-none{
     display: none !important;
 }

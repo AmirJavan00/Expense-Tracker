@@ -427,12 +427,13 @@ input:focus{
     flex-direction: column;
     gap: 12px;
 }
-#add_transaction_section input[type="submit"], #add_category_section input[type="submit"]{
+#add_category_submit, #add_transaction_submit{
     color: #fff;
     font-weight: 700;
     font-size: 1.2em;
     width: 200px;
     margin: 0 auto;
+    text-align: center;
     padding: 4px;
     border-radius: 8px;
     background-color: var(--dark-teal-green);

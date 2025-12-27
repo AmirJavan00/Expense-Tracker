@@ -1,80 +1,110 @@
 // ------------class------------
 class Category {
-    categories_arr = JSON.parse(localStorage.getItem("categories")) || [];
-    category_list_html = document.querySelector(".category_list");
-    category_option_html = document.querySelector(".category_option")
-
+    /**
+     * ساخت دسته یندی و ذخیره آن در لوکال هاست
+     * @param {string} name 
+     * @param {string} icon 
+     */
     constructor(name, icon) {
-        this.cat_name = name;
-        this.cat_icon = icon;
-        this.cat_color = randomColor();
-        if(name && icon) {
+        this.category_list_html = document.querySelector(".category_list");
+        this.category_option_html = document.querySelector(".category_option");
+        
+        // اگر نام و آیکون پاس داده شده بود، یعنی می‌خواهیم کتگوری جدید بسازیم
+        if (name && icon) {
+            this.cat_name = name;
+            this.cat_icon = icon;
+            this.cat_color = this.randomColor();
             this.create(this.cat_name, this.cat_icon, this.cat_color);
         }
     }
 
+    randomColor() {
+        /**
+         * تولید یک کد رنگی به صورت تصادفی
+         */
+        return '#' + Math.floor(Math.random()*16777215).toString(16);
+    }
+
     create(name, icon, color) {
+        /**
+         * update مقدار دهی دسته بندی و فرستادن اطلاعات به متد 
+         */
         const id = Date.now();
-        this.category_obj = { "id": id, "name": name, "icon": icon, "color": color };
-        this.update(this.category_obj);
+        const category_obj = { "id": id, "name": name, "icon": icon, "color": color };
+        this.update(category_obj);
     }
 
     update(object) {
+        /**
+         * ذخیره دسته بندی در لوکال هاست
+         */
         let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
         currentCategories.push(object);
-        
         localStorage.setItem("categories", JSON.stringify(currentCategories));
         
-        this.loadHtml(object);
+        this.loadHtml();
     }
 
-    loadHtml(category) {
-        const category_div = document.createElement('div');
-        category_div.className = 'category_item';
-        category_div.innerHTML = `
-            <div class="category_content">
-                <div class="line" style="background-color:${category.color};"></div>
-                <div class="category_logo">${category.icon}</div>
-                <div class="category_title">${category.name}</div>
-            </div>
-            <div class="delete_category">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-            </div>
-        `;
-
-        const add_transaction_category = document.createElement("div")
-        add_transaction_category.innerHTML=`
-        <input type="radio" name="cat_option" id="${category.id}">
-        <label for="${category.id}">${category.name}</label>
-        `
-
-        const deleteBtn = category_div.querySelector('.delete_category');
-        deleteBtn.addEventListener('click', () => {
-            this.removeCategory(category.id, category_div, add_transaction_category);
-        });
-
-        this.category_list_html.appendChild(category_div);
-        this.category_option_html.appendChild(add_transaction_category)
-    }
-
-    removeCategory(id, element, element2) {
+    loadHtml() {
+        /**
+         * html قرار دادن دسته بندی در کد های 
+         */
         let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
 
+        if(this.category_list_html) this.category_list_html.innerHTML = '';
+        if(this.category_option_html) this.category_option_html.innerHTML = '';
+
+        currentCategories.forEach(category => {
+            // اضافه کردن دسته بندی به لیست دسته یندی در قسمت تنظیمات
+            const category_div = document.createElement('div');
+            category_div.className = 'category_item';
+            category_div.innerHTML = `
+                <div class="category_content">
+                    <div class="line" style="background-color:${category.color};"></div>
+                    <div class="category_logo">${category.icon}</div>
+                    <div class="category_title">${category.name}</div>
+                </div>
+                <div class="delete_category">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </div>
+            `;
+            this.category_list_html.appendChild(category_div);
+
+
+            // اضافه کردن دسته بندی به فرم اضافه کردن تراکنش
+            const add_transaction_category = document.createElement("div");
+            add_transaction_category.innerHTML = `
+                <input type="radio" name="cat_option" id="${category.id}" value="${category.id}">
+                <label for="${category.id}">${category.name}</label>
+            `;
+            this.category_option_html.appendChild(add_transaction_category);
+
+
+            // دکمه حذف
+            const deleteBtn = category_div.querySelector('.delete_category');
+            deleteBtn.addEventListener('click', () => {
+                this.removeCategory(category.id);
+            });
+
+        });
+    }
+
+    removeCategory(id) {
+        /**
+         * حذف کردن دسته یندی از همه جا
+         */
+        let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
         const newCategories = currentCategories.filter(cat => cat.id !== id);
-
         localStorage.setItem("categories", JSON.stringify(newCategories));
-
-        element.style.opacity = '0';
-        setTimeout(() => {
-            element.remove();
-            element2.remove();
-        }, 300);
+        
+        this.loadHtml();
     }
 }
-
+const categoryManager = new Category(); 
+categoryManager.loadHtml();
 
 // ------------variables------------
 // مقدار های قسمت نویگیشن پایین
@@ -104,20 +134,6 @@ add_category_submit.addEventListener("click",()=>{
     category_object = new Category(inp_category_name.value, inp_category_icon.innerHTML)
     add_category_section.classList.add("display-none")
 })
-
-function randomColor(){
-    /**
-     * تولید یک کد رنگی به صورت تصادفی و برگشت دادن آن به صورت رشته 
-     */
-    const letters = "0123456789ABCDEF";
-    let color = "#";
-
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-
-    return color;
-}
 
 // بخش اضافه کردن دسته بندی
 btn_add_category.addEventListener("click",()=>{

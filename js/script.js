@@ -1,40 +1,77 @@
 // ------------class------------
 class Category {
     categories_arr = JSON.parse(localStorage.getItem("categories")) || [];
-    category_list_html = document.querySelector(".category_list")
+    category_list_html = document.querySelector(".category_list");
+    category_option_html = document.querySelector(".category_option")
 
-    
     constructor(name, icon) {
         this.cat_name = name;
         this.cat_icon = icon;
-        this.cat_color = randomColor(); 
-        this.create(this.cat_name, this.cat_icon, this.cat_color);
+        this.cat_color = randomColor();
+        if(name && icon) {
+            this.create(this.cat_name, this.cat_icon, this.cat_color);
+        }
     }
 
     create(name, icon, color) {
-        this.category_obj = { "name": name, "icon": icon, "color": color };
+        const id = Date.now();
+        this.category_obj = { "id": id, "name": name, "icon": icon, "color": color };
         this.update(this.category_obj);
     }
-    
+
     update(object) {
-        this.categories_arr.push(object);
-        localStorage.setItem("categories", JSON.stringify(this.categories_arr));
-        this.loadHtml(object)
+        let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
+        currentCategories.push(object);
+        
+        localStorage.setItem("categories", JSON.stringify(currentCategories));
+        
+        this.loadHtml(object);
     }
 
-    loadHtml(category){
-            this.category_list_html.insertAdjacentHTML("beforeend",`
-                <div class="category_item">
-                    <div class="category_content">
-                        <div class="line" style="background-color:${category.color};"></div>
-                        <div class="category_logo">${category.icon}</div>
-                        <div class="category_title">${category.name}</div>
-                    </div>
-                    <div class="delete_category">
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 64 64"><defs><style>.cls-1{fill:url(#linear-gradient);}.cls-2{fill:url(#linear-gradient-2);}</style><linearGradient id="linear-gradient" x1="5.85" y1="32" x2="58.15" y2="32" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffae46"/><stop offset="0.19" stop-color="#ff9755"/><stop offset="0.74" stop-color="#ff5a7d"/><stop offset="1" stop-color="#ff428d"/></linearGradient><linearGradient id="linear-gradient-2" x1="22.35" y1="32" x2="41.65" y2="32" xlink:href="#linear-gradient"/></defs><g id="Layer_7" data-name="Layer 7"><path class="cls-1" d="M50.5,13.5a26.15,26.15,0,1,0,0,37A26.18,26.18,0,0,0,50.5,13.5ZM47.67,47.67a22.16,22.16,0,1,1,0-31.34A22.17,22.17,0,0,1,47.67,47.67Z"/><path class="cls-2" d="M41.06,22.94a2,2,0,0,0-2.83,0L32,29.17l-6.23-6.23a2,2,0,0,0-2.83,2.83L29.17,32l-6.23,6.23a2,2,0,1,0,2.83,2.83L32,34.83l6.23,6.23a2,2,0,0,0,2.83-2.83L34.83,32l6.23-6.23A2,2,0,0,0,41.06,22.94Z"/></g></svg>
-                    </div>
-                </div>
-                `)
+    loadHtml(category) {
+        const category_div = document.createElement('div');
+        category_div.className = 'category_item';
+        category_div.innerHTML = `
+            <div class="category_content">
+                <div class="line" style="background-color:${category.color};"></div>
+                <div class="category_logo">${category.icon}</div>
+                <div class="category_title">${category.name}</div>
+            </div>
+            <div class="delete_category">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+            </div>
+        `;
+
+        const add_transaction_category = document.createElement("div")
+        add_transaction_category.innerHTML=`
+        <input type="radio" name="cat_option" id="${category.id}">
+        <label for="${category.id}">${category.name}</label>
+        `
+
+        const deleteBtn = category_div.querySelector('.delete_category');
+        deleteBtn.addEventListener('click', () => {
+            this.removeCategory(category.id, category_div, add_transaction_category);
+        });
+
+        this.category_list_html.appendChild(category_div);
+        this.category_option_html.appendChild(add_transaction_category)
+    }
+
+    removeCategory(id, element, element2) {
+        let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
+
+        const newCategories = currentCategories.filter(cat => cat.id !== id);
+
+        localStorage.setItem("categories", JSON.stringify(newCategories));
+
+        element.style.opacity = '0';
+        setTimeout(() => {
+            element.remove();
+            element2.remove();
+        }, 300);
     }
 }
 

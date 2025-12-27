@@ -389,6 +389,7 @@ input:focus{
 .category_item{
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
 }
 .category_content{
     display: flex;
@@ -398,9 +399,19 @@ input:focus{
 .delete_category{
     width: 40px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .btn_add_category{
     left: 20px;
+    top: 5px;
+}
+#categories{
+    position: relative;
+}
+#categories h3{
+    margin-bottom: 1rem;
 }
 /* استایل های قسمت افزودن تراکنش*/
 #add_transaction_section, #add_category_section{
@@ -445,6 +456,13 @@ input:focus{
 #add_transaction_section form div > label{
     font-weight: 500;
     font-size: 1.2em;
+}
+.category_option label{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em !important;
 }
 .form_input{
     display: flex;
@@ -509,6 +527,11 @@ input:focus{
 #btn_close_add_transaction svg, #btn_close_add_category svg{
     width: 100% !important;
     height: 100%;
+}
+.category_option{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 5px;
 }
 
 /* استایل های قسمت افزودن دسته بندی */

@@ -6,16 +6,18 @@ class Category {
      * @param {string} icon 
      */
     constructor(name, icon) {
-        this.category_list_html = document.querySelector(".category_list");
+        /**
+         * update مقدار دهی دسته بندی و فرستادن اطلاعات به متد 
+         */
+        this.list_category_html = document.querySelector(".category_list");
         this.category_option_html = document.querySelector(".category_option");
+        this.list_category_stats_html = document.querySelector(".list_category_stats")
         
         // اگر نام و آیکون پاس داده شده بود، یعنی می‌خواهیم کتگوری جدید بسازیم
         if (name && icon) {
-            this.cat_name = name;
-            this.cat_icon = icon;
-            this.cat_color = this.randomColor();
-            this.create(this.cat_name, this.cat_icon, this.cat_color);
-        }
+            const category_obj = { "id": Date.now(), "name": name, "icon": icon, "color": this.randomColor(), "amount": 0 };
+            this.update(category_obj);
+            }
     }
 
     randomColor() {
@@ -23,15 +25,6 @@ class Category {
          * تولید یک کد رنگی به صورت تصادفی
          */
         return '#' + Math.floor(Math.random()*16777215).toString(16);
-    }
-
-    create(name, icon, color) {
-        /**
-         * update مقدار دهی دسته بندی و فرستادن اطلاعات به متد 
-         */
-        const id = Date.now();
-        const category_obj = { "id": id, "name": name, "icon": icon, "color": color };
-        this.update(category_obj);
     }
 
     update(object) {
@@ -51,8 +44,20 @@ class Category {
          */
         let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
 
-        if(this.category_list_html) this.category_list_html.innerHTML = '';
-        if(this.category_option_html) this.category_option_html.innerHTML = '';
+        if(this.list_category_html) {
+            this.list_category_html.innerHTML = ''
+            this.category_option_html.innerHTML = ''
+            this.list_category_stats_html.innerHTML = ''
+            
+        }
+        // بررسی خالی بودن دسته بندی‌ه
+        if (currentCategories.length === 0) {
+            // نمایش پیام در بخش انتخاب دسته بندی
+            this.category_option_html.innerHTML = `
+                <div style="text-align: center; color: #e05858ff; font-size: 16px; padding: 10px;">
+                    لطفا در بخش تنظیمات دسته بندی اضافه کنید
+                </div>
+            `}
 
         currentCategories.forEach(category => {
             // اضافه کردن دسته بندی به لیست دسته یندی در قسمت تنظیمات
@@ -61,7 +66,8 @@ class Category {
             category_div.innerHTML = `
                 <div class="category_content">
                     <div class="line" style="background-color:${category.color};"></div>
-                    <div class="category_logo">${category.icon}</div>
+                    <div class="category_logo" style="
+                        box-shadow: ${category.color} 0px 0px 5px 1px;">${category.icon}</div>
                     <div class="category_title">${category.name}</div>
                 </div>
                 <div class="delete_category">
@@ -71,8 +77,7 @@ class Category {
                     </svg>
                 </div>
             `;
-            this.category_list_html.appendChild(category_div);
-
+            this.list_category_html.appendChild(category_div);
 
             // اضافه کردن دسته بندی به فرم اضافه کردن تراکنش
             const add_transaction_category = document.createElement("div");
@@ -82,6 +87,14 @@ class Category {
             `;
             this.category_option_html.appendChild(add_transaction_category);
 
+            // اضافه کردن دسته بندی به صفحه آمار
+            const category_stat = document.createElement("div")
+            category_stat.classList.add("category_stat")
+            category_stat.innerHTML=`
+                    <div class="stat_label">${category.name}</div>
+                    <div class="stat_value">${category.amount}</div>
+            `
+            this.list_category_stats_html.appendChild(category_stat)
 
             // دکمه حذف
             const deleteBtn = category_div.querySelector('.delete_category');
@@ -105,6 +118,161 @@ class Category {
 }
 const categoryManager = new Category(); 
 categoryManager.loadHtml();
+class Transaction {
+    /**
+     * ساخت تراکنش و ذخیره آن در لوکال هاست 
+     * @param {string} title عنوان تراکنش
+     * @param {string} category آی دی دسته بندی
+     * @param {number} amount مفدار دسته یندی
+     * @param {string} type نوع تراکنش که آیا درآمد است یا خرج
+     */
+
+    constructor(title, category, amount, type) {
+        /**
+         * update مقدر دهی های اولیه و فرستادن آن به متد 
+         */
+        this.list_transaction_html = document.querySelectorAll(".list_transaction");
+
+        if (title && category && amount && type) {
+            this.transaction_obj = { "id": Date.now(), "title": title, "category": category, "amount": amount, "type": type, "date": new Date().toLocaleDateString("fa-IR") };
+            this.update(this.transaction_obj);
+        }
+    }
+
+    update(transaction) {
+        /**
+         * ذخیره تراکنش در لوکال هاست
+         */
+        let currentTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        currentTransactions.push(transaction);
+        localStorage.setItem("transactions", JSON.stringify(currentTransactions));
+        this.loadHtml();
+        this.calculator()
+    }
+
+    calculator(){
+        /**
+         * انجام محاسبات و به دست آوردن خرج، درآمد و موجودی
+         */
+        let currentTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
+
+        // مقدار دهی های اولیه
+        let income = 0
+        let expence = 0
+        let balance = 0
+        let your_balance = document.querySelectorAll(".your_balance")
+        let last_month_income = document.querySelector("#last_month_income")
+        let last_month_expence = document.querySelector("#last_month_expence")
+        let this_month_income = document.querySelector("#this_month_income")
+        let this_month_expence = document.querySelector("#this_month_expence")
+
+        let transactions_number = document.querySelector("#transactions_number")
+        transactions_number.innerHTML = String(currentTransactions.length)
+
+        currentCategories.forEach(category => {
+            category.amount = 0
+        });
+
+        currentTransactions.forEach(transaction => {
+            currentCategories.forEach(category => {
+                // اضافه کردن مبلغ به مقدار دسته بندی مخصوص خودش
+                if(category.id == Number(transaction.category)){
+                    category.amount += Number(transaction.amount)
+                }
+            });
+            // برسی درآمد یا خرج و کم یا زیاد کردن موجودی
+            if(transaction.type == "value_income"){
+                income += Number(transaction.amount)
+                balance += Number(transaction.amount)
+            }else if(transaction.type == "value_expence"){
+                expence += Number(transaction.amount)
+                balance -= Number(transaction.amount)
+            }
+        });
+        last_month_expence.innerHTML = String(expence)
+        last_month_income.innerHTML = String(income)
+
+        this_month_expence.innerHTML = String(expence)
+        this_month_income.innerHTML = String(income)
+
+        your_balance.forEach(element => {
+            element.innerHTML = String(balance)
+        });
+
+        // بروزرسانی اطلاعات
+        localStorage.setItem("categories", JSON.stringify(currentCategories));
+        let add_amout_category = new Category()
+        add_amout_category.loadHtml()
+    }
+
+    loadHtml() {
+        /**
+         * html قرار دادن تراکنش در کد های 
+         */
+        let currentTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
+
+        // پاک کردن لیست‌ها قبل از رندر مجدد
+        if (this.list_transaction_html.length > 0) {
+            this.list_transaction_html.forEach(container => container.innerHTML = "");
+        }
+
+        currentTransactions.forEach(transaction => {
+            // پیدا کردن دسته بندی مربوطه
+            const currentCategory = currentCategories.find(cat => cat.id == Number(transaction.category));
+
+            const catColor = currentCategory ? currentCategory.color : '#ccc';
+            const catIcon = currentCategory ? currentCategory.icon : '?';
+
+            // اضافه کردن تراکنش به بخش آخرین تراکنش ها
+            this.list_transaction_html.forEach(container => {
+                const div_transaction = document.createElement("div");
+                div_transaction.classList.add("transaction");
+                
+                div_transaction.innerHTML = `
+                    <div class="line" style="background-color:${catColor};"></div>
+                    <div class="category_logo" style="
+                            box-shadow: ${catColor} 0px 0px 5px 1px;">${catIcon}</div>
+                    <div class="transaction_content">
+                        <div class="transaction_value ${transaction.type}">${transaction.amount}</div>
+                        <div class="transaction_title">${transaction.title}</div>
+                    </div>
+                    <div class="delete_transaction">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </div>
+                `;
+
+                // دکمه حذف
+                const deleteBtn = div_transaction.querySelector('.delete_transaction');
+                deleteBtn.addEventListener('click', () => {
+                    this.removeTransaction(transaction.id);
+                });
+
+                container.appendChild(div_transaction);
+            });
+        });
+    }
+
+    removeTransaction(id) {
+        let currentTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        
+        // حذف تراکنش با شناسه مشخص
+        const newTransactions = currentTransactions.filter(transaction => transaction.id !== id);
+        
+        localStorage.setItem("transactions", JSON.stringify(newTransactions));
+        
+        // بارگذاری مجدد لیست و اطلاعات
+        this.loadHtml()
+        this.calculator()
+    }
+}
+const transactionManager = new Transaction();
+transactionManager.loadHtml();
+transactionManager.calculator();
 
 // ------------variables------------
 // مقدار های قسمت نویگیشن پایین
@@ -113,10 +281,16 @@ let nav_items = document.querySelectorAll("#bottom_nav a")
 let home_page = document.querySelector("#home_page")
 let path_icons = document.querySelectorAll("#bottom_nav path")
 
-// مقدار های بخش اضاه کردن تراکنش
+// مقدار های بخش اضافه کردن تراکنش
 let add_transaction_btn = document.querySelectorAll(".add_transaction_btn")
 let add_transaction_section = document.querySelector("#add_transaction_section")
 let btn_close_add_transaction = document.querySelector("#btn_close_add_transaction")
+let add_transaction_submit = document.querySelector("#add_transaction_submit")
+let inp_transaction_title
+let inp_transaction_category
+let inp_transaction_amount
+let inp_transaction_type
+let transaction_object
 
 // مقدارهای بخش اضافه کردن دسته یندی
 let btn_add_category = document.querySelector(".btn_add_category")
@@ -126,16 +300,16 @@ let add_category_submit = document.querySelector("#add_category_submit")
 let inp_category_name
 let inp_category_icon
 let category_object
+
 // ------------eventlisteners------------
 
+// بخش اضافه کردن دسته بندی
 add_category_submit.addEventListener("click",()=>{
     inp_category_name = document.querySelector("#inp_category_name")
     inp_category_icon = document.querySelector(".icons_option input:checked + label")
     category_object = new Category(inp_category_name.value, inp_category_icon.innerHTML)
     add_category_section.classList.add("display-none")
 })
-
-// بخش اضافه کردن دسته بندی
 btn_add_category.addEventListener("click",()=>{
     add_category_section.classList.remove("display-none")
 })
@@ -144,6 +318,15 @@ btn_close_add_category.addEventListener("click",()=>{
 })
 
 // بخش اضافه کردن تراکنش 
+add_transaction_submit.addEventListener("click", ()=>{
+    inp_transaction_title = document.querySelector("#inp_transaction_title").value
+    inp_transaction_category = document.querySelector(".category_option input:checked").value
+    inp_transaction_amount = document.querySelector("#inp_among").value
+    inp_transaction_type = document.querySelector(".type_options input:checked").value
+
+    transaction_object = new Transaction(inp_transaction_title, inp_transaction_category, inp_transaction_amount, inp_transaction_type)
+    add_transaction_section.classList.add("display-none")
+})
 btn_close_add_transaction.addEventListener("click",()=>{
     add_transaction_section.classList.add("display-none")
 })

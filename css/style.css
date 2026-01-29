@@ -207,17 +207,31 @@ input:focus{
 #date h3{
     margin-bottom: 0.5rem;
 }
+.list_dates{
+    display: flex;
+    overflow-x: scroll;
+    gap: 5px;
+    max-width:100%;
+}
 .date_item{
-    width: 15%;
+    width: 10% !important;
+    min-width: 80px;
+    display: block;
     background-color: var(--emerald-green);
     text-align: center;
     padding: 15px 10px;
-    gap: 5px;
     border-radius: 20px;
+    cursor: pointer;
+}
+.date_item_checked{
+    border: 4px solid var(--dark-teal-green);
+    box-shadow: var(--emerald-green) 0 0 10px 1px;
+
 }
 .date_item .day{
     font-weight: 600;
     color: #fff;
+    text-shadow: #fff 0px 4px 5px ;
 }
 .date_item .month{
     font-size: 0.9em;
@@ -469,7 +483,7 @@ input:focus{
 }
 .list_transaction{
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 1rem;
     max-height: 320px;
     overflow-y: auto;

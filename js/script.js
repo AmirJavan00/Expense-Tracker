@@ -1,4 +1,6 @@
 // ------------class------------
+
+
 class Category {
     /**
      * ساخت دسته یندی و ذخیره آن در لوکال هاست
@@ -131,10 +133,9 @@ class Transaction {
         /**
          * update مقدر دهی های اولیه و فرستادن آن به متد 
          */
-        this.list_transaction_html = document.querySelectorAll(".list_transaction");
-
         if (title && category && amount && type) {
-            this.transaction_obj = { "id": Date.now(), "title": title, "category": category, "amount": amount, "type": type, "date": new Date().toLocaleDateString("fa-IR") };
+            let today = new Date()
+            this.transaction_obj = { "id": Date.now(), "title": title, "category": category, "amount": amount, "type": type, "date":today.toDateString()};
             this.update(this.transaction_obj);
         }
     }
@@ -162,10 +163,6 @@ class Transaction {
         let expence = 0
         let balance = 0
         let your_balance = document.querySelectorAll(".your_balance")
-        let last_month_income = document.querySelector("#last_month_income")
-        let last_month_expence = document.querySelector("#last_month_expence")
-        let this_month_income = document.querySelector("#this_month_income")
-        let this_month_expence = document.querySelector("#this_month_expence")
 
         let transactions_number = document.querySelector("#transactions_number")
         transactions_number.innerHTML = String(currentTransactions.length)
@@ -173,6 +170,8 @@ class Transaction {
         currentCategories.forEach(category => {
             category.amount = 0
         });
+
+
 
         currentTransactions.forEach(transaction => {
             currentCategories.forEach(category => {
@@ -190,11 +189,6 @@ class Transaction {
                 balance -= Number(transaction.amount)
             }
         });
-        last_month_expence.innerHTML = String(expence)
-        last_month_income.innerHTML = String(income)
-
-        this_month_expence.innerHTML = String(expence)
-        this_month_income.innerHTML = String(income)
 
         your_balance.forEach(element => {
             element.innerHTML = String(balance)
@@ -206,10 +200,88 @@ class Transaction {
         add_amout_category.loadHtml()
     }
 
+    history(date){
+        let currentTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
+
+        let list_transaction_history = document.querySelector("#list_transaction_history")
+        let current_historyTransactions = []
+        let current_date
+
+        list_transaction_history.innerHTML = ""
+
+        current_historyTransactions = currentTransactions.filter((transaction)=>{{
+            return transaction.date == date 
+        }})
+
+        current_historyTransactions.forEach(transaction => {
+            // پیدا کردن دسته بندی مربوطه
+            const currentCategory = currentCategories.find(cat => cat.id == Number(transaction.category));
+
+            const catColor = currentCategory ? currentCategory.color : '#ccc';
+            const catIcon = currentCategory ? currentCategory.icon : '?';
+
+            current_date = new Date()
+            current_date.setTime(transaction.id)
+            current_date = current_date.toLocaleDateString("fa-IR")
+
+            // اضافه کردن تراکنش به بخش آخرین تراکنش ها
+            const div_transaction = document.createElement("div");
+            div_transaction.classList.add("transaction");
+            
+            div_transaction.innerHTML = `
+                    <div class="line" style="background-color:${catColor};"></div>
+                    <div class="category_logo" style="
+                            box-shadow: ${catColor} 0px 0px 5px 1px;">${catIcon}</div>
+                    <div class="transaction_content">
+                        <div class="transaction_value ${transaction.type}">${transaction.amount}</div>
+                        <div class="transaction_title">${transaction.title}</div>
+                        <div class="transaction_date">${current_date}</div>
+                    </div>
+                    <div class="delete_transaction">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </div>`;
+            // دکمه حذف
+            const deleteBtn = div_transaction.querySelector('.delete_transaction');
+            deleteBtn.addEventListener('click', () => {
+                this.removeTransaction(transaction.id);
+            });
+            list_transaction_history.appendChild(div_transaction)
+        })
+    }
+
     loadHtml() {
         /**
          * html قرار دادن تراکنش در کد های 
-         */
+        */
+
+        this.list_transaction_html = document.querySelectorAll(".list_transaction");
+        this.list_dates_html = document.querySelector(".list_dates")
+
+        let today = new Date().getTime()
+        let today_string = new Date().toDateString()
+        let last_day = new Date()
+        let day_MS = 86400000
+        let date_arr
+        let date_option = {
+            day : "numeric",
+            month: "long",
+            weekday: "long"
+        }
+
+        let current_month
+        let month
+        var last_month_transaction = []
+        var this_month_transaction = []
+        let expence = 0
+        let income = 0
+        let current_date
+
+
+
         let currentTransactions = JSON.parse(localStorage.getItem("transactions")) || [];
         let currentCategories = JSON.parse(localStorage.getItem("categories")) || [];
 
@@ -217,6 +289,77 @@ class Transaction {
         if (this.list_transaction_html.length > 0) {
             this.list_transaction_html.forEach(container => container.innerHTML = "");
         }
+        this.list_dates_html.innerHTML = ""
+        
+        // بخش زمان و تاریخچه تراکنش ها
+        for (let day = 0; day <= 30; day++) {
+
+            last_day.setTime(today - (day_MS * day))
+            date_arr = last_day.toLocaleDateString("fa-IR", date_option).split(' ')
+
+            let div_date_item = document.createElement("div")
+            div_date_item.classList.add("date_item")
+            div_date_item.innerHTML = `
+                <p class="day">${date_arr[1]}</p>
+                <p class="weekday">${date_arr[2]}</p>
+                <span class="month">${date_arr[0]}</span>
+            `
+            div_date_item.setAttribute("date",`${last_day.toDateString()}`)
+
+            div_date_item.addEventListener("click", ()=>{
+                current_date = div_date_item.getAttribute("date")
+                this.history(current_date)
+            })
+            this.list_dates_html.appendChild(div_date_item)
+
+            // console.log(typeof last_month_transaction)
+            
+            currentTransactions.map((transaction)=>{
+                current_date = div_date_item.getAttribute("date")
+               
+                if(transaction.date == current_date){
+                    last_month_transaction.push(transaction)
+                }
+            })
+        }
+
+        currentTransactions.map((transaction)=>{
+                current_month = new Date()
+                current_month.setTime(transaction.id)
+                current_month = current_month.toLocaleDateString("fa-IR", {month: "long"})
+                // console.log(current_month)
+                month = new Date()
+                month = month.toLocaleDateString("fa-IR", {month: "long"})
+        
+                if(current_month == month){
+                    this_month_transaction.push(transaction)
+                }
+        })
+
+        this_month_transaction.forEach(transaction => {;
+            // برسی درآمد یا خرج و کم یا زیاد کردن موجودی
+            if(transaction.type == "value_income"){
+                income += Number(transaction.amount)
+            }else if(transaction.type == "value_expence"){
+                expence += Number(transaction.amount)
+            }
+        });
+        this_month_expence.innerHTML = String(expence)
+        this_month_income.innerHTML = String(income)
+
+        income = 0
+        expence = 0
+        last_month_transaction.forEach(transaction => {;
+            // برسی درآمد یا خرج و کم یا زیاد کردن موجودی
+            if(transaction.type == "value_income"){
+                income += Number(transaction.amount)
+            }else if(transaction.type == "value_expence"){
+                expence += Number(transaction.amount)
+            }
+        });
+        last_month_expence.innerHTML = String(expence)
+        last_month_income.innerHTML = String(income)
+
 
         currentTransactions.forEach(transaction => {
             // پیدا کردن دسته بندی مربوطه
@@ -224,11 +367,14 @@ class Transaction {
 
             const catColor = currentCategory ? currentCategory.color : '#ccc';
             const catIcon = currentCategory ? currentCategory.icon : '?';
-
+            current_date = new Date()
+            current_date.setTime(transaction.id)
+            current_date = current_date.toLocaleDateString("fa-IR")
             // اضافه کردن تراکنش به بخش آخرین تراکنش ها
             this.list_transaction_html.forEach(container => {
                 const div_transaction = document.createElement("div");
                 div_transaction.classList.add("transaction");
+                
                 
                 div_transaction.innerHTML = `
                     <div class="line" style="background-color:${catColor};"></div>
@@ -237,6 +383,7 @@ class Transaction {
                     <div class="transaction_content">
                         <div class="transaction_value ${transaction.type}">${transaction.amount}</div>
                         <div class="transaction_title">${transaction.title}</div>
+                        <div class="transaction_date">${current_date}</div>
                     </div>
                     <div class="delete_transaction">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -273,6 +420,7 @@ class Transaction {
 const transactionManager = new Transaction();
 transactionManager.loadHtml();
 transactionManager.calculator();
+
 
 // ------------variables------------
 // مقدار های قسمت نویگیشن پایین
